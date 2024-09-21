@@ -113,7 +113,7 @@ class Subscription:
                 event = dict(
                     eventType=message['data'][0],
                     eventSymbol=message['data'][1][1],
-                    data=message['data'],
+                    data=message['data'][1],
                 )
                 self.__handle_feed_event(event)
             except:

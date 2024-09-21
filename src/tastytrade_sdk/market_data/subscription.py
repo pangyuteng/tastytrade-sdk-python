@@ -109,24 +109,28 @@ class Subscription:
         elif _type == 'AUTH_STATE':
             self.__is_authorized = message['state'] == 'AUTHORIZED'
         elif _type == 'FEED_DATA':
-            print(message['data'])
-            print("--------!!!!!!!!!!!!!!!!!!!!")
-            self.__handle_feed_event(message['data'])
+            try:
+                event = dict(
+                    'eventType': message['data'][0]
+                    'eventSymbol': message['data'][1][1]
+                    'data': message['data']
+                )
+                self.__handle_feed_event(event)
+            except:
+                raise ValueError("Unexpected data structure received for FEED_DATA.")
         else:
             logging.debug('Unhandled message type: %s', _type)
 
-    def __handle_feed_event(self, event_args: list) -> None:
-        event_type, event_list = event_args
-        eventSymbol = event_list[1]
-        original_symbol = self.__streamer_symbol_translations.get_original_symbol(eventSymbol)
-        event = {}
+    def __handle_feed_event(self, event: dict) -> None:
+        event_type = event['eventType']
+        original_symbol = self.__streamer_symbol_translations.get_original_symbol(event['eventSymbol'])
         event['symbol'] = original_symbol
         if event_type == 'Quote' and self.__on_quote:
-            self.__on_quote(event_list)
+            self.__on_quote(event)
         elif event_type == 'Candle' and self.__on_candle:
-            self.__on_candle(event_list)
+            self.__on_candle(event)
         elif event_type == 'Greeks' and self.__on_greeks:
-            self.__on_greeks(event_list)
+            self.__on_greeks(event)
         else:
             logging.debug('Unhandled feed event type %s for symbol %s', event_type, original_symbol)
 

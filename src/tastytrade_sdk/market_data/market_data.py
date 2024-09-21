@@ -31,7 +31,7 @@ class MarketData:
         :param on_greeks: Handler for greeks events
         :param on_quote: Handler for quote events
         """
-        data = self.__api.get('/quote-streamer-tokens')['data']
+        data = self.__api.get('/api-quote-tokens')['data']
         return Subscription(
             data['dxlink-url'],
             data['token'],

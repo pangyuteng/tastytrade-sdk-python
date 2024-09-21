@@ -111,9 +111,9 @@ class Subscription:
         elif _type == 'FEED_DATA':
             try:
                 event = dict(
-                    'eventType': message['data'][0]
-                    'eventSymbol': message['data'][1][1]
-                    'data': message['data']
+                    eventType=message['data'][0],
+                    eventSymbol=message['data'][1][1],
+                    data=message['data'],
                 )
                 self.__handle_feed_event(event)
             except:
